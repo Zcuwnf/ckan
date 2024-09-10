@@ -536,6 +536,7 @@ my.Dataset = Backbone.Model.extend({
         if (!(field in seen)) {
           seen[field] = 0;
         }
+
         // TODO: decide whether to keep original name as label ...
         // return { id: fieldId, label: field || fieldId }
         return { id: fieldId };
@@ -2612,6 +2613,7 @@ this.recline.View = this.recline.View || {};
 // expect either that the default views are fine or that the client to have
 // initialized the MultiView with the relevant views themselves.
 my.MultiView = Backbone.View.extend({
+   /* trangdtth1402 */
   template: ' \
   <div class="recline-data-explorer"> \
     <div class="alert-messages"></div> \
@@ -2628,12 +2630,12 @@ my.MultiView = Backbone.View.extend({
       {{#recordCountWasEstimated}} \
         <span class="doc-count-approx">about</span> \
       {{/recordCountWasEstimated}} \
-      <span class="doc-count">{{recordCount}}</span> records \
+      <span class="doc-count"> Hiển thị {{recordCount}}</span> trên tổng số \
       </div> \
       <div class="menu-right"> \
         <div class="btn-group" data-toggle="buttons-checkbox"> \
           {{#sidebarViews}} \
-          <button href="#" data-action="{{id}}" class="btn btn-default">{{label}}</button> \
+          <button href="#" data-action="{{id}}" class="btn btn-default">Bộ lọc</button> \
           {{/sidebarViews}} \
         </div> \
       </div> \
@@ -2654,25 +2656,38 @@ my.MultiView = Backbone.View.extend({
 
     // Hash of 'page' views (i.e. those for whole page) keyed by page name
     if (options.views) {
+      for ( let  i =0 ; i < options.views.length ; i ++){
+        if(options.views[i].label == "Grid"){
+          options.views[i].label = "Bảng"
+        }
+        if(options.views[i].label == "Graph"){
+          options.views[i].label = "Biểu đồ"
+        }
+        if(options.views[i].label == "Map"){
+          options.views[i].label = "Bản đồ"
+        }
+      }
       this.pageViews = options.views;
+      console.log(options.views)
+
     } else {
       this.pageViews = [{
         id: 'grid',
-        label: 'Grid',
+        label: 'Bảng',
         view: new my.SlickGrid({
           model: this.model,
           state: this.state.get('view-grid')
         })
       }, {
         id: 'graph',
-        label: 'Graph',
+        label: 'Biểu đồ',
         view: new my.Graph({
           model: this.model,
           state: this.state.get('view-graph')
         })
       }, {
         id: 'map',
-        label: 'Map',
+        label: 'Bản đồ',
         view: new my.Map({
           model: this.model,
           state: this.state.get('view-map')
@@ -3091,6 +3106,7 @@ this.recline = this.recline || {};
 this.recline.View = this.recline.View || {};
 
 (function($, my) {
+  console.log( my)
   "use strict";
 
 // ## SlickGrid Dataset View
@@ -3127,6 +3143,9 @@ this.recline.View = this.recline.View || {};
 //        }
 //      });
 //// NB: you need an explicit height on the element for slickgrid to work
+
+
+//-------------------------------TrangDtth
 my.SlickGrid = Backbone.View.extend({
   initialize: function(modelEtc) {
     var self = this;
@@ -3147,7 +3166,7 @@ my.SlickGrid = Backbone.View.extend({
         columnsWidth: [],
         columnsEditor: [],
         options: {},
-        fitColumns: false
+        fitColumns: true
       }, modelEtc.state
 
     );
@@ -3200,6 +3219,7 @@ my.SlickGrid = Backbone.View.extend({
       }
       var field = self.model.fields.get(columnDef.id);
       if (field.renderer) {
+
         return  field.renderer(value, field, dataContext);
       } else {
         return  value
@@ -3257,7 +3277,9 @@ my.SlickGrid = Backbone.View.extend({
         name: sanitizeFieldName(field.label),
         field: field.id,
         sortable: true,
-        minWidth: 80,
+        //// ------ trangdtth
+        /// config style iframe in preview file .CSV
+        //minWidth: 160,
         formatter: formatter,
         validator:validator(field)
       };
@@ -4238,9 +4260,7 @@ my.Pager = Backbone.View.extend({
   template: ' \
     <div class="pagination"> \
       <ul class="pagination"> \
-        <li class="prev action-pagination-update"><a href="" class="btn btn-default">&laquo;</a></li> \
-        <li class="page-range"><a><label for="from">From</label><input id="from" name="from" type="text" value="{{from}}" /> &ndash; <label for="to">To</label><input id="to" name="to" type="text" value="{{to}}" /> </a></li> \
-        <li class="next action-pagination-update"><a href="" class="btn btn-default">&raquo;</a></li> \
+        <li class="page-range"><a><label for="from">From</label><input id="from" name="from" type="text" value="{{from}}" /> &ndash; <label for="to">To</label><input id="to" name="to" type="text" value="{{to}}" /> </a> bản ghi</li> \
       </ul> \
     </div> \
   ',
@@ -4306,21 +4326,15 @@ this.recline.View = this.recline.View || {};
 
 (function($, my) {
   "use strict";
-
+/* trangdtth1402 */
 my.QueryEditor = Backbone.View.extend({
   className: 'recline-query-editor',
   template: ' \
     <form action="" method="GET" class="form-inline" role="form"> \
       <div class="form-group"> \
-        <div class="input-group text-query"> \
-          <div class="input-group-addon"> \
-            <i class="glyphicon glyphicon-search"></i> \
-          </div> \
-          <label for="q">Search</label> \
-          <input class="form-control search-query" type="text" id="q" name="q" value="{{q}}" placeholder="Search data ..."> \
-        </div> \
+          <input class="form-control search-query" type="text" id="q" name="q" value="{{q}}" placeholder="Tìm kiếm "> \
+          <i class="glyphicon glyphicon-search"></i> \
       </div> \
-      <button type="submit" class="btn btn-default">Go &raquo;</button> \
     </form> \
   ',
 

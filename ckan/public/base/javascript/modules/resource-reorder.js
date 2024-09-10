@@ -10,9 +10,8 @@ this.ckan.module('resource-reorder', function($) {
       title: '<h1></h1>',
       help_text: '<p></p>',
       button: [
-        '<a href="javascript:;" class="btn btn-default">',
-        '<i class="fa fa-bars"></i>',
-        '<span></span>',
+        '<a href="javascript:;" class="btn btn-default btn_reorder">',
+        'Sắp xếp bộ dữ liệu',
         '</a>'
       ].join('\n'),
       form_actions: [
@@ -39,9 +38,11 @@ this.ckan.module('resource-reorder', function($) {
     initialize: function() {
       jQuery.proxyAll(this, /_on/);
 
-      var labelText = this._('Reorder resources');
-      var helpText = this._('You can rearrange the resources by dragging them using the arrow icon. Drag the resource ' +
-        'to the right and place it to the desired location on the list. When you are done, click the "Save order" -button.');
+      var labelText = this._('Sắp xếp bộ dữ liệu');
+      var helpText = this._('Bạn có thể sắp xếp lại các tài nguyên bằng cách kéo chúng bằng biểu tượng mũi tên.' +
+        'Kéo tài nguyên sang bên phải và đặt nó vào vị trí mong muốn trong danh sách. Khi bạn hoàn tất, hãy nhấp vào nút "Lưu".');
+
+         
 
       this.html_title = $(this.template.title)
         .text(labelText)

@@ -6,12 +6,13 @@ pipeline {
   environment {
     DOCKER_CREDENTIALS = credentials('ckan_2.9.7')
   }
-  }
-  post {
-    
-    always {
-      echo "success"
-    }
-    
+  stages {
+  stage ('printenv') {
+            steps {
+                  echo 'printenv'
+                  sh 'printenv'
+            }
+        }
+
   }
 }

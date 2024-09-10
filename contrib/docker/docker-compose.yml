@@ -42,9 +42,9 @@ services:
     #stdin_open: true
 
     volumes:
-      - ckan_config:/etc/ckan
-      - ckan_home:/usr/lib/ckan
-      - ckan_storage:/var/lib/ckan
+      - ./ckan_config:/etc/ckan
+      - ./ckan_home:/usr/lib/ckan
+      - ./ckan_storage:/var/lib/ckan
 
   datapusher:
     container_name: datapusher

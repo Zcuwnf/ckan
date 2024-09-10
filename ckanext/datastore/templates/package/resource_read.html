@@ -1,17 +1,9 @@
 {% ckan_extends %}
 
-{% block resource_actions_inner %}
-  {{ super() }}
-  {% if res.datastore_active %}
-    <li>{% snippet 'package/snippets/data_api_button.html', resource=res %}</li>
-  {% endif %}
-{% endblock %}
-
 {% block resource_additional_information_inner %}
   {% if res.datastore_active %}
   {% block resource_data_dictionary %}
-    <div class="module-content">
-      <h2>{{ _('Data Dictionary') }}</h2>
+    <div class="module-content meta_data" id="meta_data">
       <table class="table table-striped table-bordered table-condensed" data-module="table-toggle-more">
         <thead>
           {% block resouce_data_dictionary_headers %}

@@ -46,8 +46,8 @@ def index():
         g.datasets = query['results']
 
         g.facet_titles = {
-            u'organization': _(u'Organizations'),
-            u'groups': _(u'Groups'),
+            u'organization': _(u'Cơ quan cung cấp'),
+            u'groups': _(u'Lĩnh vực'),
             u'tags': _(u'Tags'),
             u'res_format': _(u'Formats'),
             u'license': _(u'Licenses'),
@@ -71,6 +71,18 @@ def about():
     u''' display about page'''
     return base.render(u'home/about.html', extra_vars={})
 
+# quanlhb 17/02
+
+def hdsd():
+    u''' display about page'''
+    return base.render(u'home/hdsd.html', extra_vars={})
+
+# quanlhb 28/02
+
+def dkcs():
+    u''' display about page'''
+    return base.render(u'home/dkcs.html', extra_vars={})
+
 
 def redirect_locale(target_locale, path=None):
     if path:
@@ -82,7 +94,9 @@ def redirect_locale(target_locale, path=None):
 
 util_rules = [
     (u'/', index),
-    (u'/about', about)
+    (u'/about', about),
+    (u'/hdsd', hdsd),
+    (u'/dkcs', dkcs)
 ]
 for rule, view_func in util_rules:
     home.add_url_rule(rule, view_func=view_func)

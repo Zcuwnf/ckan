@@ -4,12 +4,14 @@
 
 {% block primary_content_inner %}
 
+<div class="form_datapusher">
+
   {% set action = h.url_for('datapusher.resource_data', id=pkg.name, resource_id=res.id) %}
   {% set show_table = true %}
 
   <form method="post" action="{{ action }}" class="datapusher-form">
-    <button class="btn btn-primary" name="save" type="submit">
-      <i class="fa fa-cloud-upload"></i> {{ _('Upload to DataStore') }}
+    <button class="btn btn-primary btn_datastore-up" name="save" type="submit">
+      {{ _('Upload to DataStore') }}
     </button>
   </form>
 
@@ -84,5 +86,6 @@
       </li>
     </ul>
   {% endif %}
+</div>
 
 {% endblock %}

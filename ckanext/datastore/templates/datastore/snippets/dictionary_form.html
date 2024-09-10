@@ -1,6 +1,6 @@
 {% import 'macros/form.html' as form %}
 
-<h3>{{ _( "Field {num}.").format(num=position) }} {{ field.id }} ({{ field.type }})</h3>
+<h3 class="heading_dic">{{ _( "Trường thông tin {num}.").format(num=position) }} {{ field.id }} ({{ field.type }})</h3>
 
 {#
   Data Dictionary fields may be added this snippet. New fields following
@@ -9,7 +9,7 @@
 #}
 
 {{ form.select('info__' ~ position ~ '__type_override',
-  label=_('Type Override'), options=[
+  label=_('Kiểu dữ liệu'), options=[
   {'name': '', 'value': ''},
   {'name': 'text', 'value': 'text'},
   {'name': 'numeric', 'value': 'numeric'},
@@ -17,7 +17,7 @@
   ], selected=field.get('info', {}).get('type_override', '')) }}
 
 {{ form.input('info__' ~ position ~ '__label',
-  label=_('Label'), id='field-f' ~ position ~ 'label',
+  label=_('Nhãn'), id='field-f' ~ position ~ 'label',
   value=field.get('info', {}).get('label', ''), classes=['control-full']) }}
 
 {{ form.markdown('info__' ~ position ~ '__notes',

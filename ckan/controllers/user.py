@@ -59,6 +59,9 @@ class UserController(base.BaseController):
 
     # hooks for subclasses
     new_user_form = 'user/new_user_form.html'
+    # quanlhb 21/02
+    new_user_form_organ = 'user/new_user_form_organ.html'
+    # 
     edit_user_form = 'user/edit_user_form.html'
 
     def _new_form_to_db_schema(self):

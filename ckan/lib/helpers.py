@@ -1528,7 +1528,7 @@ def gravatar(email_hash, size=100, default=None):
         default = quote(default, safe='')
 
     return literal('''<img src="//gravatar.com/avatar/%s?s=%d&amp;d=%s"
-        class="user-image" width="%s" height="%s" alt="Gravatar" />'''
+        class="user-image" width="%s" height="%s" alt="" />'''
                    % (email_hash, size, default, size, size)
                    )
 
@@ -2639,7 +2639,7 @@ def uploads_enabled():
 
 
 @core_helper
-def get_featured_organizations(count=1):
+def get_featured_organizations(count=5):
     '''Returns a list of favourite organization in the form
     of organization_list action function
     '''
@@ -2651,8 +2651,11 @@ def get_featured_organizations(count=1):
     return orgs
 
 
+#Minh 03/02
+# Fix display total 13 item group in home page
+
 @core_helper
-def get_featured_groups(count=10000):
+def get_featured_groups(count=13):
     '''Returns a list of favourite group the form
     of organization_list action function
     '''
@@ -2663,6 +2666,88 @@ def get_featured_groups(count=10000):
                                 items=config_groups)
     return groups
 
+# trangdtth 09/03 
+
+@core_helper
+def get_groups_statistics():
+    groupinpage = {}
+
+    groupinpage['groups'] = logic.get_action('group_list')({}, {})
+
+    return groupinpage
+# 
+
+# ThangDQb 13/03
+@core_helper
+def get_organizations_list_sorted():
+    '''Returns a list of favourite organization in the form
+    of organization_list action function
+    '''
+    config_organizations = config.get('ckan.featured_orgs', '').split()
+    organizations = featured_group_organizations(items=config_organizations,
+                                       get_action='organization_show',
+                              list_action='organization_list')
+
+    organizations_list_sorted = sorted(organizations, key=lambda p: p['package_count'], reverse=True)
+    top_organizations = organizations_list_sorted[:8]
+    return top_organizations
+@core_helper
+def featured_group_organizations(items, get_action, list_action):
+    def get_group(id):
+        context = {'ignore_auth': True,
+                   'limits': {'packages': 2},
+                   'for_view': True}
+        data_dict = {'id': id,
+                     'include_datasets': True}
+
+        try:
+            out = logic.get_action(get_action)(context, data_dict)
+        except logic.NotFound:
+            return None
+        return out
+
+    groups_data = []
+
+    extras = logic.get_action(list_action)({}, {})
+
+    # list of found ids to prevent duplicates
+    found = []
+    for group_name in items + extras:
+        group = get_group(group_name)
+        if not group:
+            continue
+        # check if duplicate
+        if group['id'] in found:
+            continue
+        found.append(group['id'])
+        groups_data.append(group)
+
+    return groups_data
+
+# group_list_top
+
+@core_helper
+def get_groups_list_sorted():
+    '''Returns a list of favourite group the form
+    of organization_list action function
+    '''
+    config_groups = config.get('ckan.featured_groups', '').split()
+    groups = featured_group_organizations( items=config_groups,
+                                get_action='group_show',
+                                list_action='group_list')
+
+    groups_list_sorted = sorted(groups, key=lambda p: p['package_count'], reverse=True)
+    top_groups = groups_list_sorted[:3]
+    return  top_groups
+@core_helper   
+def get_groups_list_sorted1():
+    groups = get_groups_list_sorted();
+    total_datasets = 0
+    for group in groups:
+        total_datasets += group['package_count']
+    return total_datasets
+
+# Ket thuc
 
 @core_helper
 def featured_group_org(items, get_action, list_action, count):
@@ -2704,11 +2789,20 @@ def featured_group_org(items, get_action, list_action, count):
 def get_site_statistics():
     stats = {}
     stats['dataset_count'] = logic.get_action('package_search')(
-        {}, {"rows": 1})['count']
+        {}, {"rows": 1,"include_private": "true"})['count']
     stats['group_count'] = len(logic.get_action('group_list')({}, {}))
     stats['organization_count'] = len(
         logic.get_action('organization_list')({}, {}))
+    stats['tag_list'] = len(
+        logic.get_action('tag_list')({}, {}))
     return stats
+
+@core_helper
+def get_dataset_by_organization(organization):
+    datasetByOrganization = {}
+    datasetByOrganization['dataset_count'] = logic.get_action('package_search')(
+        {}, {"rows": 1,"include_private": "true","fq":"organization:"+ organization})['count']
+    return datasetByOrganization
 
 
 _RESOURCE_FORMATS = None

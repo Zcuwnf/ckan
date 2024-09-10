@@ -24,6 +24,9 @@ log = logging.getLogger(__name__)
 
 # hooks for subclasses
 new_user_form = u'user/new_user_form.html'
+# quanlhb 21/02
+new_user_form_organ = u'user/new_user_form_organ.html'
+# 
 edit_user_form = u'user/edit_user_form.html'
 
 user = Blueprint(u'user', __name__, url_prefix=u'/user')
@@ -124,7 +127,7 @@ def index():
 
 def me():
     return h.redirect_to(
-        config.get(u'ckan.route_after_login', u'dashboard.index'))
+        config.get(u'ckan.route_after_login', u'home.index'))
 
 
 def read(id):
@@ -450,6 +453,94 @@ class RegisterView(MethodView):
         }
         return base.render(u'user/new.html', extra_vars)
 
+# quanlhb 24/02
+class RegisterViewOrgan(MethodView):
+    def _prepare(self):
+        context = {
+            u'model': model,
+            u'session': model.Session,
+            u'user': g.user,
+            u'auth_user_obj': g.userobj,
+            u'schema': _new_form_to_db_schema(),
+            u'save': u'save' in request.form
+        }
+        try:
+            logic.check_access(u'user_create', context)
+        except logic.NotAuthorized:
+            base.abort(403, _(u'Unauthorized to register as a user.'))
+        return context
+
+    def post(self):
+        context = self._prepare()
+        try:
+            data_dict = logic.clean_dict(
+                dictization_functions.unflatten(
+                    logic.tuplize_dict(logic.parse_params(request.form))))
+            data_dict.update(logic.clean_dict(
+                dictization_functions.unflatten(
+                    logic.tuplize_dict(logic.parse_params(request.files)))
+            ))
+
+        except dictization_functions.DataError:
+            base.abort(400, _(u'Integrity Error'))
+
+        context[u'message'] = data_dict.get(u'log_message', u'')
+        try:
+            captcha.check_recaptcha(request)
+        except captcha.CaptchaError:
+            error_msg = _(u'Bad Captcha. Please try again.')
+            h.flash_error(error_msg)
+            return self.get(data_dict)
+
+        try:
+            logic.get_action(u'user_create')(context, data_dict)
+        except logic.NotAuthorized:
+            base.abort(403, _(u'Unauthorized to create user %s') % u'')
+        except logic.NotFound:
+            base.abort(404, _(u'User not found'))
+        except logic.ValidationError as e:
+            errors = e.error_dict
+            error_summary = e.error_summary
+            return self.get(data_dict, errors, error_summary)
+
+        if g.user:
+            # #1799 User has managed to register whilst logged in - warn user
+            # they are not re-logged in as new user.
+            h.flash_success(
+                _(u'User "%s" is now registered but you are still '
+                  u'logged in as "%s" from before') % (data_dict[u'name'],
+                                                       g.user))
+            if authz.is_sysadmin(g.user):
+                # the sysadmin created a new user. We redirect him to the
+                # activity page for the newly created user
+                return h.redirect_to(u'user.activity', id=data_dict[u'name'])
+            else:
+                return base.render(u'user/logout_first.html')
+
+        # log the user in programatically
+        resp = h.redirect_to(u'user.me')
+        set_repoze_user(data_dict[u'name'], resp)
+        return resp
+
+    def get(self, data=None, errors=None, error_summary=None):
+        self._prepare()
+
+        if g.user and not data and not authz.is_sysadmin(g.user):
+            # #1799 Don't offer the registration form if already logged in
+            return base.render(u'user/logout_first.html', {})
+
+        form_vars = {
+            u'data': data or {},
+            u'errors': errors or {},
+            u'error_summary': error_summary or {}
+        }
+
+        extra_vars = {
+            u'is_sysadmin': authz.is_sysadmin(g.user),
+            u'form': base.render(new_user_form_organ, form_vars)
+        }
+        return base.render(u'user/new.html', extra_vars)
+# quanlhb
 
 def login():
     # Do any plugin login stuff
@@ -842,6 +933,11 @@ user.add_url_rule(u'/edit/<id>', view_func=_edit_view)
 
 user.add_url_rule(
     u'/register', view_func=RegisterView.as_view(str(u'register')))
+
+# quanlhb 24/02
+user.add_url_rule(
+    u'/register_organ', view_func=RegisterViewOrgan.as_view(str(u'register_organ')))
+# quanlhb
 
 user.add_url_rule(u'/login', view_func=login)
 user.add_url_rule(u'/logged_in', view_func=logged_in)

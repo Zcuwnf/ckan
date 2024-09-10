@@ -8,9 +8,8 @@ this.ckan.module('resource-view-reorder', function($) {
     template: {
       title: '<h1></h1>',
       button: [
-        '<a href="javascript:;" class="btn btn-default">',
-        '<i class="fa fa-bars"></i>',
-        '<span></span>',
+        '<a href="javascript:;" class="btn btn-default btn_reorder-view">',
+        'Sắp xếp chế độ xem',
         '</a>'
       ].join('\n'),
       form_actions: [
@@ -37,7 +36,7 @@ this.ckan.module('resource-view-reorder', function($) {
     initialize: function() {
       jQuery.proxyAll(this, /_on/);
 
-      var labelText = this._('Reorder resource view');
+      var labelText = this._('Sắp xếp chế độ xem');
       this.html_title = $(this.template.title)
         .text(labelText)
         .insertBefore(this.el)

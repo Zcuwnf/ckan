@@ -58,7 +58,7 @@ class HomeController(base.BaseController):
             c.datasets = query['results']
 
             c.facet_titles = {
-                'organization': _('Organizations'),
+                'organization': _('Cơ quan cung cấp'),
                 'groups': _('Groups'),
                 'tags': _('Tags'),
                 'res_format': _('Formats'),

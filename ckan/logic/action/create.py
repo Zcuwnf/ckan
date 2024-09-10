@@ -229,6 +229,15 @@ def package_create(context, data_dict):
 
         activity = pkg.activity_stream_item('new', user_id)
         session.add(activity)
+    if pkg.private:
+        user_obj = model.User.by_name(user)
+        if user_obj:
+            user_id = user_obj.id
+        else:
+            user_id = 'not logged in'
+
+        activity = pkg.activity_stream_item('new', user_id)
+        session.add(activity)
 
     if not context.get('defer_commit'):
         model.repo.commit()

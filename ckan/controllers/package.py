@@ -253,7 +253,7 @@ class PackageController(base.BaseController):
             facets = OrderedDict()
 
             default_facet_titles = {
-                'organization': _('Organizations'),
+                'organization': _('Cơ quan cung cấp'),
                 'groups': _('Groups'),
                 'tags': _('Tags'),
                 'res_format': _('Formats'),

@@ -60,7 +60,7 @@ this.ckan.module('image-upload', function($) {
 
       // thay đổi button
       this.button_url = $('<a href="javascript:;" class="btn_link">' +
-                          this._('Nhập link ảnh hoặc tải lên file') + '</a>')
+                          this._('Gán link ảnh hoặc tải lên file') + '</a>')
         .prop('title', this._(' '))
         .on('click', this._onFromWeb)
         .insertAfter(this.input);
@@ -69,7 +69,7 @@ this.ckan.module('image-upload', function($) {
 
       // thay đổi button
       this.button_upload = $('<a href="javascript:;" class="btn_upload">' +
-                             this._('Tải lên file') + '</a>')
+                             this._('Chọn file') + '</a>')
         .insertAfter(this.input);
 
       if (this.previousUpload) {

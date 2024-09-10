@@ -282,8 +282,8 @@ def search(package_type):
     facets = OrderedDict()
 
     default_facet_titles = {
-        u'organization': _(u'Organizations'),
-        u'groups': _(u'Groups'),
+        u'organization': _(u'Cơ quan cung cấp'),
+        u'groups': _(u'Lĩnh vực'),
         u'tags': _(u'Tags'),
         u'res_format': _(u'Formats'),
         u'license_id': _(u'Licenses'),

@@ -110,9 +110,9 @@ body {
 .recline-query-editor {
   float: right;
   height: 35px;
-  padding-right: 5px;
-  margin-right: 5px;
-  border-right: solid 2px #ddd;
+  padding-right: 0;
+  margin-right: -2px;
+  /* border-right: solid 2px #ddd; */
 }
 
 .header .input-prepend {
@@ -195,8 +195,8 @@ body {
 .recline-pager .pagination .page-range {
   height: 34px;
   padding: 5px 8px;
-  margin-left: -5px;
-  border: 1px solid #ddd;
+  margin-left: -25px;
+  /* border: 1px solid #ddd; */
 }
 
 .recline-pager .pagination .page-range a {
